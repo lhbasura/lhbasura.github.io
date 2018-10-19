@@ -48,7 +48,7 @@ docker run \
 ```  
 >注：这里用的还是之前lims2版本的docker镜像为了区分命名为lims3  
 
-## mariadb
+## mariadb  
 
 ```
 docker run \
@@ -63,3 +63,19 @@ docker run \
     --restart=always \
     docker.genee.in/genee/mariadb:v10.1.10-d2015122701
 ```
+ >数据文件直接可用(位于vpn上的/home/hongbo.liu/lib，这里就不传github了)   
+  
+# redis 
+
+```
+docker run \
+    --name redis_lims3 \
+    -d \
+    -v /home/hongbo.liu/config/redis/config/:/etc/redis \
+    -v /home/hongbo.liu/config/redis/lib/:/var/lib/redis \
+    -p  6380:6379 \
+    --restart=always \
+    docker.genee.in/genee/redis:v2.8.17-d2015080301
+```
+
+未完待续......
