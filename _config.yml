@@ -1,6 +1,6 @@
 # Site settings
 title: lhbasura Blog  #你博客的标题
-SEOTitle: lhbasura的博客 | Fe Blog  #显示在浏览器上搜索的时候显示的标题
+SEOTitle: lhbasura的博客 | lhbasura Blog  #显示在浏览器上搜索的时候显示的标题
 header-img: img/page-bg-keyboard.png #显示在首页的背景图片
 email: lhbasura@geneegroup.com
 description: "代码狗了解一下。" #网站介绍
@@ -90,7 +90,7 @@ featured-tags: true                     # 是否使用首页标签
 featured-condition-size: 1              # 相同标签数量大于这个数，才会出现在首页
 
 #search plugins
-search: false                            # 是否使用搜索插件
+search: true                            # 是否使用搜索插件
 
 # Progressive Web Apps
 chrome-tab-theme-color: "#000000"
