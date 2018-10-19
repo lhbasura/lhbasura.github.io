@@ -4,7 +4,7 @@ title:      lims3.0安装
 subtitle:   lims_config
 date:       2018-10-08
 author:     lhbasura
-header-img: img/post-bg-android.jpg
+header-img: img/banner_lims.jpg
 keywords_post:  "lims3.0,安装"
 catalog: true
 tags:
