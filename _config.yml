@@ -1,0 +1,113 @@
+# Site settings
+title: lhbasura Blog  #你博客的标题
+SEOTitle: lhbasura的博客 | Fe Blog  #显示在浏览器上搜索的时候显示的标题
+header-img: img/page-bg-keyboard.png #显示在首页的背景图片
+email: lhbasura@geneegroup.com
+description: "代码狗了解一下。" #网站介绍
+keyword: "lhbasura的博客,GitHub,博客,Blog,JAVA" #关键词
+url: "https://lhbasura.github.io"          # your host, for absolute URL
+baseurl: ""      # for example, '/blog' if your blog hosted on 'host/blog'
+github_repo: "https://github.com/lhbasura/lhbasura.github.io.git" # you code repository
+author: lhbasura
+
+# 是否托管在Coding_Pages
+Coding_Pages: true
+
+#  是否开启百度自动推送JS代码
+baidu_js_push: false
+
+# Sidebar settings侧边栏
+sidebar: true                           # whether or not using Sidebar.
+sidebar-about-description: "Goals determine what you going to be!"
+sidebar-avatar: /img/avatar_p11179162.jpg      # use absolute URL, seeing it's used in both `/` and `/about/`
+
+
+# SNS settings社交账号
+RSS: false
+# weibo_username:
+#zhihu_username:    fedemo
+#github_username:    FeDemo
+# facebook_username:
+#twitter_username:   Fedemo10
+# coding_username: fedemo
+
+
+
+# Build settings
+# from 2016, 'pygments' is unsupported on GitHub Pages. Use 'rouge' for highlighting instead.
+permalink: pretty
+paginate: 10
+exclude: ["less","node_modules","Gruntfile.js","package.json","README.md"]
+anchorjs: true                          # if you want to customize anchor. check out line:181 of `post.html`
+
+
+
+# Gems
+# from PR#40, to support local preview for Jekyll 3.0
+# gems: [jekyll-paginate]
+plugins: [jekyll-paginate]
+
+
+
+# Markdown settings
+# replace redcarpet to kramdown,
+# although redcarpet can auto highlight code, the lack of header-id make the catalog impossible, so I switch to kramdown
+# document: http://jekyllrb.com/docs/configuration/#kramdown
+markdown: kramdown
+highlighter: rouge
+kramdown:
+  input: GFM                            # use Github Flavored Markdown !important
+
+
+# 评论系统
+# Gitalk
+gitalk:
+  enable: true    #是否开启Gitalk评论
+  clientID: 'e586058b9b493ebc0557'    #生成的clientID
+  clientSecret: '824a4835ef3f25146478f810f2ce497255acc5ad'   #同上
+  repo: lhbasura.github.io    #仓库名称
+  owner: lhbasura    #github用户名
+  admin: lhbasura
+  id: 'window.location.pathname'
+
+
+
+
+# Analytics settings 百度统计track_id
+# Baidu Analytics
+#ba_track_id: ced86d2ada092fb3a0d736f793d90120
+
+# Google Analytics
+# ga_track_id: 'UA-90855596-1'            # Format: UA-xxxxxx-xx
+# ga_domain: auto
+
+
+
+
+
+# Featured Tags
+featured-tags: true                     # 是否使用首页标签
+featured-condition-size: 1              # 相同标签数量大于这个数，才会出现在首页
+
+#search plugins
+search: true                            # 是否使用搜索插件
+
+# Progressive Web Apps
+chrome-tab-theme-color: "#000000"
+service-worker: true
+
+
+
+# Friends好友链接
+friends: [
+    {
+        title: "Fe Blog",
+        href: "https://fedemo.top/"
+    },{
+        title: "interview",
+        href: "https://fedemo.github.io/interview/"
+    },{
+        title: "Fe Coding",
+        href: "https://coding.net/u/fedemo/project"
+    }
+]
