@@ -1,7 +1,7 @@
 ---
 layout:     post
 title:      VPN上部署的lims3.0基础服务
-subtitle:   lims_config
+subtitle:   lims config
 date:       2018-10-19
 author:     lhbasura
 header-img: img/banner_lims.jpg
@@ -19,13 +19,13 @@ tags:
 docker run \
 	--name nginx_lims3 \
 	-d \
-	-v /home/hongbo.liu/config/nginx/nginx.conf:/etc/nginx/nginx.conf \
-        -v /home/hongbo.liu/config/nginx/fastcgi_params:/etc/nginx/fastcgi_params \
-	-v /home/hongbo.liu/config/nginx/sites-enabled:/etc/nginx/sites-enabled \
-	-v /home/hongbo.liu/config/nginx/sites-available:/etc/nginx/sites-available \
-	-v /home/hongbo.liu/config/nginx/conf.d:/etc/nginx/conf.d \
-	-v /home/hongbo.liu/log/nginx:/var/log/nginx \
-	-v /home/hongbo.liu/project/lims2:/var/lib/lims2:rw \
+	-v ~/config/nginx/nginx.conf:/etc/nginx/nginx.conf \
+        -v ~/config/nginx/fastcgi_params:/etc/nginx/fastcgi_params \
+	-v ~/config/nginx/sites-enabled:/etc/nginx/sites-enabled \
+	-v ~/config/nginx/sites-available:/etc/nginx/sites-available \
+	-v ~/config/nginx/conf.d:/etc/nginx/conf.d \
+	-v ~/log/nginx:/var/log/nginx \
+	-v ~/project/lims2:/var/lib/lims2:rw \
 	-p 88:80/tcp \
 	--restart=always \
 	--privileged \
@@ -38,9 +38,9 @@ docker run \
 docker run \
     --name=lims3 \
     -d \
-    -v /home/hongbo.liu/project/lims2:/var/lib/lims2 \
-    -v /home/hongbo.liu/disk:/home/disk \
--v /home/hongbo.liu/log/php:/var/log/php7/\
+    -v ~/project/lims2:/var/lib/lims2 \
+    -v ~/disk:/home/disk \
+-v ~/log/php:/var/log/php7/\
     -p 66:9000/tcp \
     --restart=always \
     --privileged \
@@ -54,25 +54,25 @@ docker run \
 docker run \
     --name=mariadb_lims3 \
     -d \
-    -v /home/hongbo.liu/lib/mysql:/var/lib/mysql \
+    -v ~/lib/mysql:/var/lib/mysql \
     -v /var/log/mysql:/var/log/mysql \
-    -v /home/hongbo.liu/config/mariadb/my.cnf:/etc/mysql/my.cnf \
-    -v /home/hongbo.liu/config/mariadb/conf.d/binlog.cnf:/etc/mysql/conf.d/binlog.cnf \
-    -v /home/hongbo.liu/config/mariadb/conf.d/mysqld_safe_syslog.cnf:/etc/mysql/conf.d/mysqld_safe_syslog.cnf \
+    -v ~/config/mariadb/my.cnf:/etc/mysql/my.cnf \
+    -v ~/config/mariadb/conf.d/binlog.cnf:/etc/mysql/conf.d/binlog.cnf \
+    -v ~/config/mariadb/conf.d/mysqld_safe_syslog.cnf:/etc/mysql/conf.d/mysqld_safe_syslog.cnf \
     -p 3305:3306 \
     --restart=always \
     docker.genee.in/genee/mariadb:v10.1.10-d2015122701
 ```
- >数据文件直接可用(位于vpn上的/home/hongbo.liu/lib，这里就不传github了)   
+ >数据文件直接可用(位于vpn上我的家目录下的lib，这里就不传github了)   
   
-# redis 
+## redis 
 
 ```
 docker run \
     --name redis_lims3 \
     -d \
-    -v /home/hongbo.liu/config/redis/config/:/etc/redis \
-    -v /home/hongbo.liu/config/redis/lib/:/var/lib/redis \
+    -v ~/config/redis/config/:/etc/redis \
+    -v ~/config/redis/lib/:/var/lib/redis \
     -p  6380:6379 \
     --restart=always \
     docker.genee.in/genee/redis:v2.8.17-d2015080301
