@@ -12,6 +12,7 @@ tags:
     - snippet  
 ---  
 
+
 ## 前言  
 vscode上面自带了snippet插件，这里分享一些我平时常用的一些代码段
 ## snippet自定义php打印代码段 
