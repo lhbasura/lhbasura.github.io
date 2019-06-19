@@ -5,7 +5,7 @@ subtitle:   工厂方法
 date:       2019-02-14
 author:     lhbasura
 header-img: 
-keywords_post:  ""
+keywords_post:  "factory method"
 catalog: true
 tags:
     -   
