@@ -8,5 +8,6 @@ header-img:
 keywords_post:  "factory method"
 catalog: true
 tags:
-    -   
+    -  factory
+    -  Design Pattern 
 ---  
