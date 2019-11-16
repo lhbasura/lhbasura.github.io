@@ -16,8 +16,8 @@ tags:
 LOG.info("收到 $class$.$method$ 调用请求，入参：$holder$", $params$);
 
 ```groovy
-class: className()
-method: methodName()
-holder: groovyScript("_1.collect{it+'={}'}.join('，')",methodParameters()) 
-$params: groovyScript("_1.collect{it}.join(', ')",methodParameters())
+className() //class
+methodName() //method
+groovyScript("_1.collect{it+'={}'}.join('，')",methodParameters()) //holder
+groovyScript("_1.collect{it}.join(', ')",methodParameters()) //params
 ```
