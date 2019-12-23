@@ -41,7 +41,7 @@ vscode上面自带了snippet插件，这里分享一些我平时常用的一些�
 /*
 * @Date:2018-10-20 04:20:42
 * @Author: LiuHongbo
-* @Email: hongbo.liu@geneegroup.com
+* @Email: hongbo.liu@gmail.com
 * @Description:
 */
 ```
@@ -53,7 +53,7 @@ vscode上面自带了snippet插件，这里分享一些我平时常用的一些�
 			"/*",
 			"* @Date:${CURRENT_YEAR}-${CURRENT_MONTH}-${CURRENT_DATE} ${CURRENT_HOUR}:${CURRENT_MINUTE}:${CURRENT_SECOND}",
 			"* @Author: LiuHongbo",
-			"* @Email: hongbo.liu@geneegroup.com",
+			"* @Email: lhbasura@gmail.com",
 			"* @Description:$1",
 			"*/"
 		],
