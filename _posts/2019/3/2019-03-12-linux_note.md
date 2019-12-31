@@ -1,6 +1,6 @@
 ---  
 layout:     post
-title:      linux 空间清理 
+title:      linux 磁盘清理 
 subtitle:   linux
 date:       2019-03-12
 author:     lhbasura 
