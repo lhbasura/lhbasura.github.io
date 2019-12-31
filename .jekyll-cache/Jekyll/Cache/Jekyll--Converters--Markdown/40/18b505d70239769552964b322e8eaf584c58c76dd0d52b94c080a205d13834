@@ -1,0 +1,93 @@
+I"O<blockquote>
+  <p>在本地调试你的博客<br />
+官网 <a href="http://jekyllcn.com">jekyllcn.com</a></p>
+</blockquote>
+
+<h1 id="在windows上安装jekyll">在Windows上安装Jekyll</h1>
+<h2 id="什么是jekyll">什么是Jekyll</h2>
+
+<p>Jekyll 是一个简单的博客形态的静态站点生产机器。它有一个模版目录，其中包含原始文本格式的文档，通过一个转换器（如 Markdown）和我们的 Liquid 渲染器转化成一个完整的可发布的静态网站，你可以发布在任何你喜爱的服务器上。Jekyll 也可以运行在 GitHub Page 上，也就是说，你可以使用 GitHub 的服务来搭建你的项目页面、博客或者网站，而且是完全免费的。</p>
+
+<p>以上来自官网介绍翻译<br />
+上官网 <a href="http://jekyllcn.com">jekyllcn.com</a></p>
+
+<h2 id="为什么需要jekyll">为什么需要Jekyll</h2>
+
+<p>在github上搭建的博客,由于github自带 <strong>Jekyll</strong> .所以才会识别我们的Jekyll项目.<br />
+如果我们只是纯粹的书写markdown格式的文章,那么的确不需要安装Jekyll,可以如果想对博客进行样式以及一些小功能的修改,那么久需要不停的改代码F5了.如果没有安装Jekll,我们得不停的commit,push.这样一来延迟较大,有时提交了代码可能要等个十几分钟才更新,二来这样会污染我们的git history记录,会形成很多不必要的记录,不利于查看维护.</p>
+
+<h2 id="安装jekyll">安装Jekyll</h2>
+<h4 id="jekyll依赖">Jekyll依赖</h4>
+
+<p>安装 Jekyll 相当简单，但是你得先做些准备:</p>
+<ul>
+  <li>Ruby:(rubyinstaller-2.2.5-x64.exe)</li>
+  <li>DevKit:(DevKit-mingw64-32-4.7.2-20130224-1151-sfx.exe)</li>
+</ul>
+
+<p>以上是我使用的版本号,可以参考一下  <br />
+下载地址:<a href="https://rubyinstaller.org/downloads/archives/">点我下载</a><br />
+<img src="https://raw.githubusercontent.com/FeDemo/img_gitalk/master/2017-12-11-blog_insert-jekyll-for-windows/1.png" alt="" /></p>
+
+<h4 id="下载安装">下载安装</h4>
+
+<ul>
+  <li>
+    <p>从rubyinstaller下载安装包并安装,把该钩的都√上</p>
+
+    <p><img src="https://raw.githubusercontent.com/FeDemo/img_gitalk/master/2017-12-11-blog_insert-jekyll-for-windows/2.png" alt="rubyinstaller" /></p>
+  </li>
+  <li>
+    <p>把安装的DevKit点开解压,可以放在ruby的同一目录</p>
+
+    <p><img src="https://raw.githubusercontent.com/FeDemo/img_gitalk/master/2017-12-11-blog_insert-jekyll-for-windows/3.png" alt="DevKit" /></p>
+  </li>
+</ul>
+
+<h4 id="cmd命令">cmd命令</h4>
+
+<ol>
+  <li>通过 开始→运行→cmd→打开命令行窗口</li>
+  <li>进入DevKit解压的目录,我是放在和ruby同一目录的.<br />
+ <code class="highlighter-rouge">&gt; G:</code><br />
+ <code class="highlighter-rouge">&gt; cd G:\Ruby22-x64</code></li>
+  <li>生成config.xml配置文件，该配置文件中包含了前面的Ruby安装目录 （G:\Ruby22-x64）<br />
+ <code class="highlighter-rouge">&gt; ruby dk.rb init</code></li>
+  <li>安装dk.rb<br />
+ <code class="highlighter-rouge">&gt; ruby dk.rb install</code></li>
+  <li>安装Jekyll<br />
+ <code class="highlighter-rouge">&gt; gem install jekyll</code></li>
+  <li>安装jekyll-paginate<br />
+ <code class="highlighter-rouge">&gt; gem install jekyll-paginate</code></li>
+  <li>测试:输入<code class="highlighter-rouge">jekyll -v</code>查看版本号,是否安装成功</li>
+</ol>
+
+<h2 id="一些error">一些Error</h2>
+<h4 id="连接超时">连接超时</h4>
+<p>在第五步安装Jekyll时，可能会报错</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ERROR:  Could not find a valid gem 'sass' (&gt;= 0), here is why:
+Unable to download data from .... (http://rubygems.org/latest_specs.4.8.gz)
+</code></pre></div></div>
+<p>这是因为被墙了,连接超时,GFW无敌!</p>
+<ul>
+  <li>
+    <p>解决方案1<br />
+翻墙，挂vpn保证连接顺畅</p>
+  </li>
+  <li>
+    <p>解决方案2
+通过连接国内镜像网站:<a href="http://gems.ruby-china.org/">http://gems.ruby-china.org/</a>  <br />
+将该网站加入gem sources <br />
+<code class="highlighter-rouge">gem sources -a http://gems.ruby-china.org/</code><br />
+成功会有success提示<br />
+重试下<code class="highlighter-rouge">&gt; gem install jekyll</code>就好了</p>
+  </li>
+</ul>
+
+<h2 id="使用jekyll本地查看网页">使用jekyll本地查看网页</h2>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  cd 项目地址
+  jekyll serve
+</code></pre></div></div>
+<p>接着在浏览器上输入<a href="http://127.0.0.1:4000">http://127.0.0.1:4000</a>,可以查看我们的博客了</p>
+:ET

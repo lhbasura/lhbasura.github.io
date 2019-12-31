@@ -1,0 +1,10 @@
+I"�<h2 id="打印入参日志">打印入参日志</h2>
+
+<p>LOG.info(“收到 $class$.$method$ 调用请求，入参：$holder$”, $params$);</p>
+
+<div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">className</span><span class="o">()</span> <span class="c1">//class</span>
+<span class="n">methodName</span><span class="o">()</span> <span class="c1">//method</span>
+<span class="n">groovyScript</span><span class="o">(</span><span class="s2">"_1.collect{it+'={}'}.join('，')"</span><span class="o">,</span><span class="n">methodParameters</span><span class="o">())</span> <span class="c1">//holder</span>
+<span class="n">groovyScript</span><span class="o">(</span><span class="s2">"_1.collect{it}.join(', ')"</span><span class="o">,</span><span class="n">methodParameters</span><span class="o">())</span> <span class="c1">//params</span>
+</code></pre></div></div>
+:ET

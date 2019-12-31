@@ -1,0 +1,21 @@
+I"�<h2 id="环境说明">环境说明</h2>
+
+<ul>
+  <li>idea版本 2019.1</li>
+  <li>gradle版本 5.6.2</li>
+  <li>jdk版本 1.8.0_101</li>
+  <li>Spring版本 5.2.0</li>
+</ul>
+
+<h2 id="can-not-find">Can not find</h2>
+<h4 id="问题">问题</h4>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Error:(60, 30) java: 找不到符号
+  符号:   类 Signature
+  位置: 类 org.springframework.cglib.core.KeyFactory
+</code></pre></div></div>
+<h4 id="解决方案">解决方案</h4>
+<p>进入spring-core中执行</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">gradle objenesisRepackJar
+gradle cglibRepackJar</code></pre></figure>
+:ET

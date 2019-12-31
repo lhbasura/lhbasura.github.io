@@ -1,0 +1,144 @@
+I"<blockquote>
+  <p>参考:<a href="http://www.w3school.com.cn">W3C</a>,<a href="http://www.jb51.net/article/57407.htm">hebedich</a><br />
+window.location对象笔记</p>
+</blockquote>
+
+<h2 id="前言">前言</h2>
+
+<p>location是一个常用的对象,我们可以通过他获得有关当前 <strong>URL</strong> 的信息</p>
+
+<p>PS: window.location等价于document.location，可以交换使用</p>
+
+<p>关于他的属性以及一些方法却一直记得不是很熟,在这里做一个简单的笔记,方便以后查看</p>
+
+<h2 id="location">Location</h2>
+
+<blockquote>
+  <p>一个例子</p>
+</blockquote>
+
+<p>URL:  <a href="/">http://127.0.0.1:4000/2017/12/21/http_window.location/?name=fedemo&amp;&amp;id=001#cn</a></p>
+
+<h4 id="location-对象属性">Location 对象属性</h4>
+
+<p>这八个属性都是可读写的,我们可以设置或返回其中的数据<br />
+但是只有修改href与hash还有意义,location.href会重新定位到一个URL，而修改location.hash会跳到当前页面中的anchor(<code class="highlighter-rouge">&lt;a id="name"&gt;</code>或者<code class="highlighter-rouge">&lt;div id="id"&gt;</code>等)名字的标记(如果有)，而且页面不会被重新加载</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">属性</th>
+      <th style="text-align: center">描述</th>
+      <th style="text-align: center">值</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">hash</td>
+      <td style="text-align: center">从井号 (#) 开始的 URL（锚）</td>
+      <td style="text-align: center">#cn</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">host</td>
+      <td style="text-align: center">主机名和当前 URL 的端口号</td>
+      <td style="text-align: center">4000</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">hostname</td>
+      <td style="text-align: center">当前 URL 的主机名</td>
+      <td style="text-align: center">127.0.0.1</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">href</td>
+      <td style="text-align: center">完整的 URL</td>
+      <td style="text-align: center">http://127.0.0.1:4000/2017/12/21/http_window.location/?name=fedemo&amp;&amp;id=001#cn</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">pathname</td>
+      <td style="text-align: center">当前 URL 的路径部分</td>
+      <td style="text-align: center">/2017/12/21/http_window.location/</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">port</td>
+      <td style="text-align: center">当前 URL 的端口号</td>
+      <td style="text-align: center">4000</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">protocol</td>
+      <td style="text-align: center">当前 URL 的协议</td>
+      <td style="text-align: center">http</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">search</td>
+      <td style="text-align: center">从问号 (?) 开始的 URL（查询部分）</td>
+      <td style="text-align: center">?name=fedemo&amp;&amp;id=001</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>PS: <code class="highlighter-rouge">hash</code>和<code class="highlighter-rouge">search</code>,实质上是截取第一个#(?)之后的字段  <br />
+<br /></p>
+<h4 id="location-对象方法">Location 对象方法</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">属性</th>
+      <th style="text-align: center">描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">assign()</td>
+      <td style="text-align: center">加载新的文档</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">reload()</td>
+      <td style="text-align: center">重新加载当前文档</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">replace()</td>
+      <td style="text-align: center">用新的文档替换当前文档</td>
+    </tr>
+  </tbody>
+</table>
+
+<blockquote>
+  <p>location.assign( url )</p>
+</blockquote>
+
+<p>location.assign(‘http://www.baidu.com’); 等价于 window.location = ‘http://www.baidu.com’</p>
+
+<p>这种方式会将新地址放到浏览器历史栈中，意味着转到新页面后“后退按钮”仍可以回到该页面。</p>
+
+<blockquote>
+  <p>location.reload( force )</p>
+</blockquote>
+
+<p>重新载入当前页面。force为true时从服务器端重载；false则从浏览器缓存中重载，默认值false。</p>
+
+<blockquote>
+  <p>location.replace( url )</p>
+</blockquote>
+
+<p>与assign方法一样，但会从浏览器历史栈中删除本页面，也就是说跳转到新页面后“后退按钮”不能回到该页面。</p>
+
+<p>目前IE、Chrome只是简单的跳转，只有Firefox会删除本页面的历史记录。</p>
+<h2 id="对象描述">对象描述</h2>
+
+<p>Location 对象存储在 Window 对象的 Location 属性中，表示那个窗口中当前显示的文档的 Web 地址。它的 href 属性存放的是文档的完整 URL，其他属性则分别描述了 URL 的各个部分。这些属性与 Anchor 对象（或 Area 对象）的 URL 属性非常相似。当一个 Location 对象被转换成字符串，href 属性的值被返回。这意味着你可以使用表达式 location 来替代 location.href。</p>
+
+<p>不过 Anchor 对象表示的是文档中的超链接，Location 对象表示的却是浏览器当前显示的文档的 URL（或位置）。但是 Location 对象所能做的远远不止这些，它还能控制浏览器显示的文档的位置。如果把一个含有 URL 的字符串赋予 Location 对象或它的 href 属性，浏览器就会把新的 URL 所指的文档装载进来，并显示出来。</p>
+
+<p>除了设置 location 或 location.href 用完整的 URL 替换当前的 URL 之外，还可以修改部分 URL，只需要给 Location 对象的其他属性赋值即可。这样做就会创建新的 URL，其中的一部分与原来的 URL 不同，浏览器会将它装载并显示出来。例如，假设设置了Location对象的 hash 属性，那么浏览器就会转移到当前文档中的一个指定的位置。同样，如果设置了 search 属性，那么浏览器就会重新装载附加了新的查询字符串的 URL。</p>
+
+<p>除了 URL 属性外，Location 对象的 reload() 方法可以重新装载当前文档，replace() 可以装载一个新文档而无须为它创建一个新的历史记录，也就是说，在浏览器的历史列表中，新文档将替换当前文档。</p>
+
+<h2 id="url">url</h2>
+
+<p>url: 统一资源定位符 / Uniform Resource Locator</p>
+
+<p>统一资源定位符是对可以从互联网上得到的资源的位置和访问方法的一种简洁的表示，是互联网上标准资源的地址。互联网上的每个文件都有一个唯一的URL，它包含的信息指出文件的位置以及浏览器应该怎么处理它。</p>
+
+<p>它最初是由蒂姆·伯纳斯·李发明用来作为万维网的地址。现在它已经被万维网联盟编制为互联网标准RFC1738了。</p>
+:ET

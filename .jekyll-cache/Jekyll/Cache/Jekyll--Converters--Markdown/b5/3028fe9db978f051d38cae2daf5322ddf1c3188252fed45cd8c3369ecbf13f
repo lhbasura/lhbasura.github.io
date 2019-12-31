@@ -1,0 +1,44 @@
+I"�	<h1 id="说明">说明</h1>
+<p>我做开发时用到vagrant+docker的形式，我们需要将宿主机中的项目映射到vagrant再在vagrant中将其
+挂载到docker，这时会出现一些问题，以下是我遇到的问题和解决方案</p>
+
+<h1 id="1挂载到docker中的目录为空">1.挂载到docker中的目录为空</h1>
+<p>这是因为在宿主机还未将项目映射到vagrant中vagrant就将目录挂载到了docker中的缘故，我们可以通过<code class="highlighter-rouge">sudo systemctl restart docker</code> 命令重启docker解决如果不想每次手动重启可以再Vagrantfile中写入重启脚本</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code> config.vm.provision "shell", run:"always", inline: &lt;&lt;-SHELL
+    sudo systemctl restart docker
+ SHELL
+</code></pre></div></div>
+<h1 id="2项目文件加载速度慢">2.项目文件加载速度慢</h1>
+<p>这个问题是多半由于vagrant需要对项目文件与主机进行同步造成的，这里我们可以启用<code class="highlighter-rouge">NFS</code>来解决,我们只需要在Vagrantfile中
+挂载目录的那一行末尾加上<code class="highlighter-rouge">type:'nfs'</code>就像这样</p>
+
+<p><img src="/img/vagrantfile.png" alt="Vagrantfile" /></p>
+
+<h1 id="3关于macos更新成mojave版本后nfs无法启用问题">3.关于MacOS更新成Mojave版本后NFS无法启用问题</h1>
+<blockquote>
+  <p>MacOS更新成Mojave后原本nfs需要用到的<code class="highlighter-rouge">/etc</code>下的<code class="highlighter-rouge">exports</code>文件没有了，不管是
+vagrant自动创建还是手动创建你会发现没有权限（即使是root）
+这是MacOS的系统保护机制造成的，你需要给某个程序对磁盘的完全访问权限</p>
+</blockquote>
+
+<ol>
+  <li>
+    <p>打开Mac OS X的system settings&gt; Security &amp; Privacy&gt; privacy选项卡</p>
+  </li>
+  <li>
+    <p>选择Full Disk Access，然后单击加号图标。</p>
+  </li>
+  <li>
+    <p>在列表中添加终端（在我的案例中为iTerm）</p>
+  </li>
+  <li>
+    <p>重启iTerm</p>
+  </li>
+  <li>
+    <p>在iterm中手动创建<code class="highlighter-rouge">/etc/exports</code>文件：</p>
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sudo touch /etc/exports
+</code></pre></div>    </div>
+    <p>执行完应该可以看到<code class="highlighter-rouge">/etc</code>下创建的exports文件,这时候就可以按一般步骤启动vagrant了</p>
+  </li>
+</ol>
+:ET

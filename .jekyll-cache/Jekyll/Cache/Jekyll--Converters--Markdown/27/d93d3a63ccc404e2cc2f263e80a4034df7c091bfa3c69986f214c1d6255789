@@ -1,0 +1,198 @@
+I"�V<h2 id="io模型">IO模型</h2>
+<blockquote>
+  <p>从IO请求可以分为<code class="highlighter-rouge">同步</code>和<code class="highlighter-rouge">异步</code> <br />
+从数据读取(拷贝)可分为<code class="highlighter-rouge">阻塞</code>和<code class="highlighter-rouge">非阻塞</code></p>
+</blockquote>
+
+<h2 id="概念">概念</h2>
+<p>对于一个读操作来说，一般会经过下面两个过程：</p>
+<ol>
+  <li>等待数据就绪．比如说，对于一个网络连接来说，就是等待数据通过连接到达主机．当数据到达主机时，把数据拷贝到内核中的缓冲区．</li>
+  <li>将数据从内核拷贝到进程．即把数据从内核的缓冲区拷贝到应用程序的缓冲区．</li>
+</ol>
+
+<p>下图是一个标准的IO读操作
+<img src="/img/io.png" alt="IO读操作" /></p>
+
+<blockquote>
+  <p>注：这里的读操作指的是IO读操作,java网络编程中的accept实质上也进行了IO读操作</p>
+</blockquote>
+
+<p>当我们调用api通过socket进行读操作时，实际上是在进行操作④
+实际上，当我们进行操作④时并不一定能读取到数据，因为系统内核可能还没有把数据写入缓冲区
+这时候操作④有两种方案</p>
+<ol>
+  <li>阻塞：在缓冲区有数据之前应用程序一直等待，直到缓冲区有数据时程序再往下运行</li>
+  <li>非阻塞：不管缓冲区有没有数据，应用程序都往下运行，一般通过while(true)反复读缓冲区</li>
+</ol>
+
+<p>当我们需要进行读操作时，先要对系统内核发出IO请求(调用api)即操作①，当我们向内核请求读IO后并不一定能立即获得IO（你可以理解为程序在请求操作系统的一种资源，你需要排队获取资源的使用权）
+但是你可能会有一些读取数据之后的后继操作，这时你会有两种方案</p>
+<ol>
+  <li>同步：排队直到IO操作结束再做后继操作</li>
+  <li>异步：先处理后继操作,当获得IO时进行IO操作<br />
+问题来了程序怎么知道什么时候获得了IO</li>
+</ol>
+
+<h2 id="异步的解决方案">异步的解决方案</h2>
+<ol>
+  <li>通过一个线程不断查询IO是否就绪（轮询）</li>
+  <li>操作系统告诉程序（事件驱动）</li>
+</ol>
+
+<p>我们排列组合一下可以得到四种IO模型</p>
+<ol>
+  <li>同步阻塞</li>
+  <li>同步非阻塞</li>
+  <li>异步阻塞</li>
+  <li>异步非阻塞</li>
+</ol>
+
+<h2 id="同步阻塞">同步阻塞</h2>
+<p>首先声明一点，同步阻塞模型是无法实现服务端与多客户端通信的。
+为什么呢？
+前面说了，同步即等待IO操作执行完毕，然而你的IO操作是阻塞的，所以，这意味着，当你的IO操作不管是否需要等待，你的线程都是挂起的，这意味着你只能处理一个客户端的IO请求。
+可以看一下服务端的代码</p>
+
+<figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="kn">package</span> <span class="n">com</span><span class="o">.</span><span class="na">io</span><span class="o">.</span><span class="na">demo</span><span class="o">.</span><span class="na">syncblock</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">java.io.*</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.net.ServerSocket</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.net.Socket</span><span class="o">;</span>
+
+<span class="cm">/*
+同步阻塞IO
+ */</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Server</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="kt">int</span> <span class="no">PORT</span> <span class="o">=</span> <span class="mi">8888</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">doSomething</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"这里是后继操作"</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">IOException</span> <span class="o">{</span>
+        <span class="nc">ServerSocket</span> <span class="n">serverSocket</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ServerSocket</span><span class="o">(</span><span class="no">PORT</span><span class="o">);</span>
+        <span class="k">while</span> <span class="o">(</span><span class="kc">true</span><span class="o">)</span> <span class="o">{</span>
+            <span class="c1">// 这里连接是阻塞的，accept实质上也进行了IO操作，三次握手的本质是传输是TCP数据包</span>
+            <span class="nc">Socket</span> <span class="n">client</span> <span class="o">=</span> <span class="n">serverSocket</span><span class="o">.</span><span class="na">accept</span><span class="o">();</span>
+            <span class="nc">BufferedReader</span> <span class="n">reader</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">BufferedReader</span><span class="o">(</span><span class="k">new</span> <span class="nc">InputStreamReader</span><span class="o">(</span><span class="n">client</span><span class="o">.</span><span class="na">getInputStream</span><span class="o">()));</span>
+            <span class="k">while</span> <span class="o">(!</span><span class="n">client</span><span class="o">.</span><span class="na">isClosed</span><span class="o">())</span> <span class="o">{</span>
+                <span class="nc">String</span> <span class="n">str</span><span class="o">;</span>
+                <span class="k">try</span> <span class="o">{</span>
+                    <span class="c1">// 这里读操作是阻塞的</span>
+                    <span class="k">if</span> <span class="o">((</span><span class="n">str</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="na">readLine</span><span class="o">())</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"\33 you received a messge:"</span> <span class="o">+</span> <span class="n">str</span><span class="o">);</span>
+                    <span class="o">}</span>
+                    <span class="n">doSomething</span><span class="o">();</span> <span class="c1">// 后继操作</span>
+                <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">IOException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="n">e</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span></code></pre></figure>
+
+<h2 id="同步非阻塞nio实现">同步非阻塞（NIO实现）</h2>
+
+<figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="kn">package</span> <span class="n">com</span><span class="o">.</span><span class="na">io</span><span class="o">.</span><span class="na">demo</span><span class="o">.</span><span class="na">syncnonblock</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">java.io.IOException</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.net.InetSocketAddress</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.nio.ByteBuffer</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.nio.channels.SelectionKey</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.nio.channels.Selector</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.nio.channels.ServerSocketChannel</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.nio.channels.SocketChannel</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.Iterator</span><span class="o">;</span>
+
+<span class="cm">/*
+同步非阻塞IO
+ */</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Server</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="kt">int</span> <span class="no">BUF_SIZE</span> <span class="o">=</span> <span class="mi">1024</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="kt">int</span> <span class="no">PORT</span> <span class="o">=</span> <span class="mi">8888</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="kt">int</span> <span class="no">TIMEOUT</span> <span class="o">=</span> <span class="mi">3000</span><span class="o">;</span>
+
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">doSomething</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"这里是后继操作"</span><span class="o">);</span>
+    <span class="o">}</span>
+
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">IOException</span> <span class="o">{</span>
+        <span class="nc">ServerSocketChannel</span> <span class="n">socketChannel</span> <span class="o">=</span> <span class="nc">ServerSocketChannel</span><span class="o">.</span><span class="na">open</span><span class="o">();</span>
+        <span class="n">socketChannel</span><span class="o">.</span><span class="na">socket</span><span class="o">().</span><span class="na">bind</span><span class="o">(</span><span class="k">new</span> <span class="nc">InetSocketAddress</span><span class="o">(</span><span class="no">PORT</span><span class="o">));</span>
+        <span class="n">socketChannel</span><span class="o">.</span><span class="na">configureBlocking</span><span class="o">(</span><span class="kc">false</span><span class="o">);</span>
+        <span class="nc">Selector</span> <span class="n">selector</span> <span class="o">=</span> <span class="nc">Selector</span><span class="o">.</span><span class="na">open</span><span class="o">();</span>
+        <span class="n">socketChannel</span><span class="o">.</span><span class="na">register</span><span class="o">(</span><span class="n">selector</span><span class="o">,</span> <span class="nc">SelectionKey</span><span class="o">.</span><span class="na">OP_ACCEPT</span><span class="o">);</span>
+        <span class="k">while</span> <span class="o">(</span><span class="kc">true</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">selector</span><span class="o">.</span><span class="na">select</span><span class="o">(</span><span class="no">TIMEOUT</span><span class="o">)</span> <span class="o">==</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"=="</span><span class="o">);</span>
+                <span class="k">continue</span><span class="o">;</span>
+            <span class="o">}</span>
+            <span class="nc">Iterator</span><span class="o">&lt;</span><span class="nc">SelectionKey</span><span class="o">&gt;</span> <span class="n">iter</span> <span class="o">=</span> <span class="n">selector</span><span class="o">.</span><span class="na">selectedKeys</span><span class="o">().</span><span class="na">iterator</span><span class="o">();</span>
+            <span class="k">while</span> <span class="o">(</span><span class="n">iter</span><span class="o">.</span><span class="na">hasNext</span><span class="o">())</span> <span class="o">{</span>
+                <span class="nc">SelectionKey</span> <span class="n">key</span> <span class="o">=</span> <span class="n">iter</span><span class="o">.</span><span class="na">next</span><span class="o">();</span>
+                <span class="k">if</span> <span class="o">(</span><span class="n">key</span><span class="o">.</span><span class="na">isAcceptable</span><span class="o">())</span> <span class="o">{</span>
+                    <span class="n">handleAccept</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
+                <span class="o">}</span>
+                <span class="k">if</span> <span class="o">(</span><span class="n">key</span><span class="o">.</span><span class="na">isReadable</span><span class="o">())</span> <span class="o">{</span>
+                    <span class="n">handleRead</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
+                <span class="o">}</span>
+                <span class="k">if</span> <span class="o">(</span><span class="n">key</span><span class="o">.</span><span class="na">isWritable</span><span class="o">()</span> <span class="o">&amp;&amp;</span> <span class="n">key</span><span class="o">.</span><span class="na">isValid</span><span class="o">())</span> <span class="o">{</span>
+                    <span class="n">handleWrite</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
+                <span class="o">}</span>
+                <span class="k">if</span> <span class="o">(</span><span class="n">key</span><span class="o">.</span><span class="na">isConnectable</span><span class="o">())</span> <span class="o">{</span>
+                    <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"isConnectable = true"</span><span class="o">);</span>
+                <span class="o">}</span>
+                <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"t2"</span><span class="o">);</span>
+                <span class="n">doSomething</span><span class="o">();</span>
+                <span class="n">iter</span><span class="o">.</span><span class="na">remove</span><span class="o">();</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="kd">static</span> <span class="kt">void</span> <span class="nf">handleAccept</span><span class="o">(</span><span class="nc">SelectionKey</span> <span class="n">key</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">IOException</span> <span class="o">{</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"一个客户端连接了"</span><span class="o">);</span>
+        <span class="nc">ServerSocketChannel</span> <span class="n">ssChannel</span> <span class="o">=</span> <span class="o">(</span><span class="nc">ServerSocketChannel</span><span class="o">)</span> <span class="n">key</span><span class="o">.</span><span class="na">channel</span><span class="o">();</span>
+        <span class="nc">SocketChannel</span> <span class="n">sc</span> <span class="o">=</span> <span class="n">ssChannel</span><span class="o">.</span><span class="na">accept</span><span class="o">();</span>
+        <span class="n">sc</span><span class="o">.</span><span class="na">configureBlocking</span><span class="o">(</span><span class="kc">false</span><span class="o">);</span>
+        <span class="n">sc</span><span class="o">.</span><span class="na">register</span><span class="o">(</span><span class="n">key</span><span class="o">.</span><span class="na">selector</span><span class="o">(),</span> <span class="nc">SelectionKey</span><span class="o">.</span><span class="na">OP_READ</span><span class="o">,</span> <span class="nc">ByteBuffer</span><span class="o">.</span><span class="na">allocateDirect</span><span class="o">(</span><span class="no">BUF_SIZE</span><span class="o">));</span>
+    <span class="o">}</span>
+
+    <span class="kd">static</span> <span class="kt">void</span> <span class="nf">handleRead</span><span class="o">(</span><span class="nc">SelectionKey</span> <span class="n">key</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">IOException</span> <span class="o">{</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"发生了读操作"</span><span class="o">);</span>
+        <span class="nc">SocketChannel</span> <span class="n">sc</span> <span class="o">=</span> <span class="o">(</span><span class="nc">SocketChannel</span><span class="o">)</span> <span class="n">key</span><span class="o">.</span><span class="na">channel</span><span class="o">();</span>
+        <span class="nc">ByteBuffer</span> <span class="n">buf</span> <span class="o">=</span> <span class="o">(</span><span class="nc">ByteBuffer</span><span class="o">)</span> <span class="n">key</span><span class="o">.</span><span class="na">attachment</span><span class="o">();</span>
+        <span class="kt">long</span> <span class="n">bytesRead</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="na">read</span><span class="o">(</span><span class="n">buf</span><span class="o">);</span>
+        <span class="k">while</span> <span class="o">(</span><span class="n">bytesRead</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">buf</span><span class="o">.</span><span class="na">flip</span><span class="o">();</span>
+            <span class="k">while</span> <span class="o">(</span><span class="n">buf</span><span class="o">.</span><span class="na">hasRemaining</span><span class="o">())</span> <span class="o">{</span>
+                <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">print</span><span class="o">((</span><span class="kt">char</span><span class="o">)</span> <span class="n">buf</span><span class="o">.</span><span class="na">get</span><span class="o">());</span>
+            <span class="o">}</span>
+            <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">();</span>
+            <span class="n">buf</span><span class="o">.</span><span class="na">clear</span><span class="o">();</span>
+            <span class="n">bytesRead</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="na">read</span><span class="o">(</span><span class="n">buf</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">bytesRead</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">sc</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+        <span class="o">}</span>
+
+    <span class="o">}</span>
+
+    <span class="kd">static</span> <span class="kt">void</span> <span class="nf">handleWrite</span><span class="o">(</span><span class="nc">SelectionKey</span> <span class="n">key</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">IOException</span> <span class="o">{</span>
+
+        <span class="nc">ByteBuffer</span> <span class="n">buf</span> <span class="o">=</span> <span class="o">(</span><span class="nc">ByteBuffer</span><span class="o">)</span> <span class="n">key</span><span class="o">.</span><span class="na">attachment</span><span class="o">();</span>
+        <span class="n">buf</span><span class="o">.</span><span class="na">flip</span><span class="o">();</span>
+        <span class="nc">SocketChannel</span> <span class="n">sc</span> <span class="o">=</span> <span class="o">(</span><span class="nc">SocketChannel</span><span class="o">)</span> <span class="n">key</span><span class="o">.</span><span class="na">channel</span><span class="o">();</span>
+        <span class="k">while</span> <span class="o">(</span><span class="n">buf</span><span class="o">.</span><span class="na">hasRemaining</span><span class="o">())</span> <span class="o">{</span>
+            <span class="n">sc</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="n">buf</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="n">buf</span><span class="o">.</span><span class="na">compact</span><span class="o">();</span>
+    <span class="o">}</span>
+
+<span class="o">}</span></code></pre></figure>
+
+<h2 id="异步阻塞">异步阻塞</h2>
+:ET

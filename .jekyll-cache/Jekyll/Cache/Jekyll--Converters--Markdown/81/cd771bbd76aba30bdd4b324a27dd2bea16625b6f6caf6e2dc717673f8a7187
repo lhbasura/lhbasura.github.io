@@ -1,0 +1,19 @@
+I"|<blockquote>
+  <p>原文 <a href="https://learnku.com/articles/10736/some-craters-in-mysql-8011">链接</a></p>
+</blockquote>
+
+<h2 id="1authentication-type">1、Authentication type：</h2>
+<p>用户的 Authentication type 默认为 caching_sha2_password，导致数据库连接错误，抛出如下异常：</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Illuminate\Database\QueryException : SQLSTATE[HY000] [2054] The 
+server requested authentication method unknown to the client
+</code></pre></div></div>
+<p>解决方案：修改密码认证方式<br />
+<code class="highlighter-rouge">ALTER USER 'YOURUSERNAME'@'localhost' IDENTIFIED WITH mysql_native_password BY 'YOURPASSWORD';</code></p>
+
+<h2 id="2删除了-no_auto_create_user-模式">2、删除了 NO_AUTO_CREATE_USER 模式</h2>
+<p>在 5.7.* 的日志中提到已废除该模式，在 8.0.11 中删除了，迁移时会抛出如下异常：</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Illuminate\Database\QueryException : SQLSTATE[42000]: Syntax error or access 
+violation: 1231 Variable 'sql_mode' can't be set to the value of 'NO_AUTO_CREATE_USER'
+</code></pre></div></div>
+<p>解决方案：将 <code class="highlighter-rouge">config/database.php</code> 配置文件中 mysql 的 strict 的值改为 <code class="highlighter-rouge">false</code> 即可！</p>
+:ET

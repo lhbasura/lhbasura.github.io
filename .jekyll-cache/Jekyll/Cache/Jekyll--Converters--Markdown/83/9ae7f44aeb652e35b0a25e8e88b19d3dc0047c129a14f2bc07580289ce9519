@@ -1,0 +1,120 @@
+I"�<h2 id="redis的安装">redis的安装</h2>
+
+<h4 id="windows">Windows</h4>
+
+<blockquote>
+  <p>下载地址: <a href="https://github.com/MSOpenTech/redis/releases">https://github.com/MSOpenTech/redis/releases</a></p>
+</blockquote>
+
+<p><img src="https://raw.githubusercontent.com/FeDemo/img_gitalk/master/2018-05-31-hello-redis/1.png" alt="" /></p>
+
+<blockquote>
+  <p>安装</p>
+</blockquote>
+
+<p>下载后解压到本地</p>
+
+<p><img src="https://raw.githubusercontent.com/FeDemo/img_gitalk/master/2018-05-31-hello-redis/2.png" alt="" /></p>
+
+<blockquote>
+  <p>开启服务</p>
+</blockquote>
+
+<p>redis在windows上可以直接使用,不需要安装</p>
+
+<p>使用cmd命令启动服务</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt; d:
+&gt; cd redis
+&gt; redis-server.exe redis.windows.conf
+</code></pre></div></div>
+
+<p><img src="https://raw.githubusercontent.com/FeDemo/img_gitalk/master/2018-05-31-hello-redis/3.png" alt="" /></p>
+
+<blockquote>
+  <p>连接测试</p>
+</blockquote>
+
+<p>使用redis客户端连接时,redis服务记得不要关</p>
+
+<p>使用cmd启动客户端</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt; d:
+&gt; cd redis
+&gt; redis-cli.exe -h 127.0.0.1 -p 6379
+</code></pre></div></div>
+
+<p><img src="https://raw.githubusercontent.com/FeDemo/img_gitalk/master/2018-05-31-hello-redis/4.png" alt="" /></p>
+
+<h4 id="linux">linux</h4>
+
+<blockquote>
+  <p>下载地址: <a href="http://redis.io/download">http://redis.io/download</a></p>
+</blockquote>
+
+<p>下载并解压redis</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt; wget http://download.redis.io/releases/redis-2.8.17.tar.gz
+&gt; tar xzf redis-2.8.17.tar.gz
+&gt; cd redis-2.8.17
+&gt; make
+</code></pre></div></div>
+
+<blockquote>
+  <p>启动服务</p>
+</blockquote>
+
+<p>在redis的安装目录,开启服务</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt; src/redis-server
+</code></pre></div></div>
+
+<p>带配置的服务</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt; src/redis-server redis.conf
+</code></pre></div></div>
+
+<blockquote>
+  <p>客户端连接</p>
+</blockquote>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt; src/redis-cli
+</code></pre></div></div>
+
+<blockquote>
+  <p>关闭服务</p>
+</blockquote>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>src/redis-cli shutdown
+</code></pre></div></div>
+
+<h2 id="配置密码">配置密码</h2>
+
+<p>目前连接redis都是不需要密码的,可以通过修改<code class="highlighter-rouge">redis.windows.conf</code>设置密码(linux修改<code class="highlighter-rouge">redis.conf</code>文件)</p>
+
+<p><img src="https://raw.githubusercontent.com/FeDemo/img_gitalk/master/2018-05-31-hello-redis/5.png" alt="" /></p>
+
+<p>找到requirepass,取消<code class="highlighter-rouge">#</code>注释 再后面设置密码,</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>requirepass test
+</code></pre></div></div>
+
+<p>这样下次启动时就需要使用密码连接</p>
+
+<h4 id="使用密码连接">使用密码连接</h4>
+
+<blockquote>
+  <p>windows</p>
+</blockquote>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>redis-cli.exe -h 123.123.123.123 -p 6379 -a test
+</code></pre></div></div>
+<blockquote>
+  <p>linux</p>
+</blockquote>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>src/redis-cli -a test
+</code></pre></div></div>
+
+<h2 id="连接远程redis服务">连接远程redis服务</h2>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt; redis-cli.exe -h 123.123.123.123 -p 6379 -a test
+</code></pre></div></div>
+<p>和连接本地一样,只要输入远程redis服务的ip和端口号就好了</p>
+
+<p><br /></p>
+:ET

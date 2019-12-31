@@ -1,0 +1,33 @@
+I"$<h2 id="一修改成淘宝镜像源">一、修改成淘宝镜像源</h2>
+<h4 id="1-命令">1. 命令</h4>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm config set registry https://registry.npm.taobao.org
+</code></pre></div></div>
+
+<h4 id="2-验证命令">2. 验证命令</h4>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm config get registry
+</code></pre></div></div>
+<p>如果返回https://registry.npm.taobao.org，说明镜像配置成功。</p>
+
+<h2 id="二修改成华为云镜像源">二、修改成华为云镜像源</h2>
+<h4 id="1-命令-1">1. 命令</h4>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm config set registry https://mirrors.huaweicloud.com/repository/npm/
+</code></pre></div></div>
+<h4 id="2-验证命令-1">2. 验证命令</h4>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm config get registry
+</code></pre></div></div>
+
+<p>如果返回https://mirrors.huaweicloud.com/repository/npm/，说明镜像配置成功。</p>
+
+<h2 id="三通过使用淘宝cnpm安装">三、通过使用淘宝cnpm安装</h2>
+<h4 id="1-安装cnpm">1. 安装cnpm</h4>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm install -g cnpm --registry=https://registry.npm.taobao.org
+</code></pre></div></div>
+
+<h4 id="2-使用cnpm">2. 使用cnpm</h4>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cnpm install xxx
+</code></pre></div></div>
+:ET

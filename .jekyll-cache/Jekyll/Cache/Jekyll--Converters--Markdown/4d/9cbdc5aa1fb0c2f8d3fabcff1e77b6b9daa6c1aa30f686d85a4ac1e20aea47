@@ -1,0 +1,18 @@
+I"X<blockquote>
+  <p>原文 <a href="https://www.jianshu.com/p/f4dbe17bda2e">链接</a></p>
+</blockquote>
+
+<h4 id="安装node">安装node</h4>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl --silent --location https://rpm.nodesource.com/setup_8.x | sudo bash -
+sudo yum -y install nodejs`
+</code></pre></div></div>
+
+<h4 id="安装yarn">安装yarn</h4>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl --silent --location https://dl.yarnpkg.com/rpm/yarn.repo | sudo tee /etc/yum.repos.d/yarn.repo
+sudo yum install yarn
+</code></pre></div></div>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;input type="hidden"
+                   th:name="${_csrf.parameterName}"
+                   th:value="${_csrf.token}"/&gt;
+</code></pre></div></div>
+:ET

@@ -1,0 +1,6 @@
+I"6<h2 id="概念">概念</h2>
+<p><code class="highlighter-rouge">HMR(模块热替换)</code>:不刷新页面的情况下把更新的代码实时显示在页面上<br />
+<code class="highlighter-rouge">Tree shaking</code>:移除 JavaScript 上下文中的未引用代码<br />
+<code class="highlighter-rouge">sideEffects(副作用)</code>:在导入时会执行特殊行为的代码(打包时一定不能忽略的代码)<br />
+<code class="highlighter-rouge">UglifyJsPlugin</code>:打包时进行压缩处理（-p参数或在webpack4中将mode设置为production）</p>
+:ET

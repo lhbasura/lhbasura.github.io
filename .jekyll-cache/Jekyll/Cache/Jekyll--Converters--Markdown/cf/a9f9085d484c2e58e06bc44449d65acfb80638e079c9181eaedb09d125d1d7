@@ -1,0 +1,94 @@
+I"a<blockquote>
+  <p>参考:<a href="https://baidu.com">百度</a>,<a href="http://blog.csdn.net/u011244202/article/details/57106544">阳光早已褪色</a>,<a href="https://molunerfinn.com/hexo-travisci-https/">molunerfinn</a> <br />
+使用cloudflare给网站上个小锁,https服务  <br />
+关于http和https的区别,可以看我的另一篇文章:<a href="/2017/12/27/difference-between-http-and-https/">HTTP和HTTPS的区别</a></p>
+</blockquote>
+
+<h2 id="前言">前言</h2>
+
+<p>由于购买了域名, <code class="highlighter-rouge">.github.io</code> 的证书不能用在我的 <a href="https://fedemo.top">fedemo.top</a>上面了.</p>
+
+<p>这使得我的网址前面没有了那把绿色的小锁,这使得我动起了https改造的念头.</p>
+
+<p>刚好,在域名解析这边.百度云没有通知我就直接劫持了我的DNS,虽然认证完很快就解封了,不过还是给我留下了坏印象.</p>
+
+<p>在寻找其他DNS服务商的时候我发现了<a href="https://www.cloudflare.com/">cloudflare</a></p>
+
+<p>一个提供DNS,并且提供免费HTTPS服务的CDN提供商.</p>
+
+<p>本着分享精神,在这里写一个简单的教程,记录下我给我的博客加上HTTPS的过程</p>
+
+<h2 id="一注册">一、注册</h2>
+
+<p>当然,第一步是注册了.</p>
+
+<p>由于<a href="https://www.cloudflare.com/">cloudflare</a>,是国外的网站,并且没有中文支持,英语差的可能有点苦手.</p>
+
+<p><img src="https://raw.githubusercontent.com/FeDemo/img_gitalk/master/2017-12-26-blog_add-https/1.png" alt="" /></p>
+
+<p>跟着提示一步步走就好了,过程略过……</p>
+
+<h2 id="二添加dns解析">二、添加DNS解析</h2>
+
+<p>注册成功后,第二步就是添加DNS解析了,选择 <strong>DNS</strong></p>
+
+<p>主要是添加两条A记录指向github pages,ip地址分别是<code class="highlighter-rouge">192.30.252.153</code>和<code class="highlighter-rouge">192.30.252.153</code>,然后再把 <code class="highlighter-rouge">www</code> 指向非 <code class="highlighter-rouge">www</code> 的地址(当然,如果需要的话也可以把非 <code class="highlighter-rouge">www.</code> 的地址指向 <code class="highlighter-rouge">www.</code> 的地址)</p>
+
+<p><img src="https://raw.githubusercontent.com/FeDemo/img_gitalk/master/2017-12-26-blog_add-https/2.png" alt="" /></p>
+
+<p>接着需要将我们的DNS服务商的地址改成Cloudflare要求的两个DNS服务器地址:</p>
+
+<p><img src="https://raw.githubusercontent.com/FeDemo/img_gitalk/master/2017-12-26-blog_add-https/3.png" alt="" /></p>
+
+<p>一般会过24到48小时生效,不够不影响我们的使用</p>
+
+<h2 id="三开启https">三、开启HTTPS</h2>
+
+<p>第三步就需要我们使用cloudflare的HTTPS服务了,选择 <strong>Crypto</strong></p>
+
+<p>开启SSL服务:</p>
+
+<p><img src="https://raw.githubusercontent.com/FeDemo/img_gitalk/master/2017-12-26-blog_add-https/4.png" alt="" /></p>
+
+<p>这里的实现原理其实是用户到 <strong>cloudflare</strong> 服务器的连接为https，而 <strong>cloudflare</strong> 到 <strong>GithubPage</strong> 服务器的连接为http，就是在CDN服务器那里加上反向代理。
+到这里,我们就可以使用cloudflare的证书来进行https连接了.</p>
+
+<h2 id="四重定向http访问到https">四、重定向HTTP访问到HTTPS</h2>
+
+<p>这个时候我们访问<a href="https://fedemo.top">https://fedemo.top</a>自然走的是HTTPS。但是如果有人访问了<a href="http://fedemo.top">http://fedemo.top</a>，那要如何跳转到HTTPS的页面呢？</p>
+
+<p>CloudFare另一个很棒的功能 <strong>Page Rules</strong> 就派上用场了。</p>
+
+<p>我们可以指定我们的域名强制使用HTTPS，并且当访问是HTTP的时候重定向到HTTPS。这样就能保证用户访问我们的页面都是通过HTTPS的了。</p>
+
+<p><img src="https://raw.githubusercontent.com/FeDemo/img_gitalk/master/2017-12-26-blog_add-https/5.png" alt="" /></p>
+
+<p>点击 <strong>Create</strong> 添加两条规则</p>
+
+<h2 id="五加入hsts解析">五、加入HSTS解析</h2>
+
+<blockquote>
+  <p>HSTS（HTTP Strict Transport Security）国际互联网工程组织IETF正在推行一种新的Web安全协议</p>
+</blockquote>
+
+<p>上面说到，我们有可能访问自己的网站是走HTTP-&gt;304重定向-&gt;HTTPS。这个是浏览器跟服务器进行了一次通信之后才发生的跳转。那有没有可能做到，访问的是HTTP，但是浏览器识别之后自动转成HTTPS访问，而不经过重定向那一层操作呢？有的。通过HSTS的Preload List。</p>
+
+<p>可以参考这篇<a href="https://www.jianshu.com/p/caa80c7ad45c">文章</a>对HSTS进行更深入的了解。</p>
+
+<p>还是CloudFare，它家自有的HSTS功能，开启之后就能很好的满足我们的需要。还是在 <strong>Crypto</strong> 选项下，开启HSTS</p>
+
+<p><img src="https://raw.githubusercontent.com/FeDemo/img_gitalk/master/2017-12-26-blog_add-https/6.png" alt="" /></p>
+
+<p>建议都使用默认的选项。</p>
+
+<p><img src="https://raw.githubusercontent.com/FeDemo/img_gitalk/master/2017-12-26-blog_add-https/8.png" alt="" />
+然后可以去<a href="https://hstspreload.org/">HSTS Preload List</a>的网站把我们的域名进行检查并收录（不能是子域名，必须是一级域名），如果没通过会给出修改建议，按照建议修改就行。如果通过了，就会放入审核列表。之后可以时不时回来看看自己的网站被收录了没有。</p>
+
+<p>我是由于也是刚提交的,现在正在等候中。由于审核据说都是人工审核,可能会比较慢,网上的说法普遍是几周内。所以耐心等待收录。一旦被收录就会应用到主流浏览器上，这样你的网站就是更加安全的网站啦。</p>
+
+<h2 id="成果">成果</h2>
+
+<p>最终:   <br />
+<img src="https://raw.githubusercontent.com/FeDemo/img_gitalk/master/2017-12-26-blog_add-https/7.png" alt="" />
+我的网站加上了一个代表安全的绿色的小锁,一本满足</p>
+:ET

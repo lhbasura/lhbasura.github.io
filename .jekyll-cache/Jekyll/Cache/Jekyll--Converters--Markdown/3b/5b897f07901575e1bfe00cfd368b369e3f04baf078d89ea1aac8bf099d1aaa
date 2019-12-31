@@ -1,0 +1,268 @@
+I"�%<blockquote>
+  <p>操作字段,<code class="highlighter-rouge">||</code>,<code class="highlighter-rouge">wm_concat()</code>函数,<code class="highlighter-rouge">REPLACE()</code>函数</p>
+</blockquote>
+
+<h2 id="对表格字段进行合并">对表格字段进行合并</h2>
+
+<h3 id="前言">前言</h3>
+
+<p>在很多时候,我们会需要对查询出来的数据进行连接字符串的 <strong>+</strong> 操作.
+一般来说,这一点在业务代码中实现会更方便一些.
+这里,我要说的是如何使用SQL语句进行字段的合并拼接.</p>
+
+<h3 id="试验的数据样式">试验的数据样式</h3>
+
+<p>首先,我们需要一串数据库的数据:一张 <strong>student</strong> 表:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">id</th>
+      <th style="text-align: center">class</th>
+      <th style="text-align: center">student_name</th>
+      <th style="text-align: center">student_id</th>
+      <th style="text-align: center">student_from</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">1</td>
+      <td style="text-align: center">1</td>
+      <td style="text-align: center">张一</td>
+      <td style="text-align: center">1</td>
+      <td style="text-align: center">河南</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">2</td>
+      <td style="text-align: center">1</td>
+      <td style="text-align: center">张四</td>
+      <td style="text-align: center">2</td>
+      <td style="text-align: center">福建</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">3</td>
+      <td style="text-align: center">2</td>
+      <td style="text-align: center">王五</td>
+      <td style="text-align: center">1</td>
+      <td style="text-align: center">北京</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">4</td>
+      <td style="text-align: center">1</td>
+      <td style="text-align: center">赵三</td>
+      <td style="text-align: center">3</td>
+      <td style="text-align: center">新疆</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">5</td>
+      <td style="text-align: center">2</td>
+      <td style="text-align: center">孙二</td>
+      <td style="text-align: center">2</td>
+      <td style="text-align: center">南京</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">6</td>
+      <td style="text-align: center">2</td>
+      <td style="text-align: center">李六</td>
+      <td style="text-align: center">3</td>
+      <td style="text-align: center">河北</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="进行数据的拼接">进行数据的拼接</h3>
+
+<p>好了,现在我们的数据库有了一张学生表,表里有班级,学生姓名,学号,和生源地.
+现在我们需要获得这张表的数据:<br />
+<code class="highlighter-rouge">select * from student;</code></p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">id</th>
+      <th style="text-align: center">class</th>
+      <th style="text-align: center">student_name</th>
+      <th style="text-align: center">student_id</th>
+      <th style="text-align: center">student_from</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">1</td>
+      <td style="text-align: center">1</td>
+      <td style="text-align: center">张一</td>
+      <td style="text-align: center">1</td>
+      <td style="text-align: center">河南</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">2</td>
+      <td style="text-align: center">1</td>
+      <td style="text-align: center">张四</td>
+      <td style="text-align: center">2</td>
+      <td style="text-align: center">福建</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">3</td>
+      <td style="text-align: center">2</td>
+      <td style="text-align: center">王五</td>
+      <td style="text-align: center">1</td>
+      <td style="text-align: center">北京</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">4</td>
+      <td style="text-align: center">1</td>
+      <td style="text-align: center">赵三</td>
+      <td style="text-align: center">3</td>
+      <td style="text-align: center">新疆</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">5</td>
+      <td style="text-align: center">2</td>
+      <td style="text-align: center">孙二</td>
+      <td style="text-align: center">2</td>
+      <td style="text-align: center">南京</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">6</td>
+      <td style="text-align: center">2</td>
+      <td style="text-align: center">李六</td>
+      <td style="text-align: center">3</td>
+      <td style="text-align: center">河北</td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 id="进行列的拼接">进行列的拼接</h4>
+
+<p>可是如我我们需要讲除了班级的学生信息全部显示在一行并以 <strong>//</strong> 隔开要怎么做呢?<br />
+我们只要这样:</p>
+
+<p><code class="highlighter-rouge">select s.class,(s.student_name||'//'||s.student_id||'//'||s.student_from) about from student s;</code></p>
+
+<p>就能获得:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">class</th>
+      <th style="text-align: center">about</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">1</td>
+      <td style="text-align: center">张一//1//河南</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">1</td>
+      <td style="text-align: center">张四//2//福建</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">2</td>
+      <td style="text-align: center">王五//1//北京</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">1</td>
+      <td style="text-align: center">赵三//3//新疆</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">2</td>
+      <td style="text-align: center">孙二//2//南京</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">2</td>
+      <td style="text-align: center">李六//3//河北</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>那么我们是怎么做到的呢,正是 <code class="highlighter-rouge">||'//'||</code> ,我们用这个符号把列数据进行合并.</p>
+
+<p>其中的关键则是: <code class="highlighter-rouge">||</code>  ，JAVA语言中其名称为逻辑“或”，在SQL中则用来连接两个字符串连接符。</p>
+
+<p>sql: <code class="highlighter-rouge">s.student_name||'//'||s.student_id||'//'||s.student_from</code></p>
+
+<p>那么,这句话翻译成java则是:</p>
+
+<p>java: <code class="highlighter-rouge">s.student_name+"//"+s.student_id+"//"+s.student_from</code></p>
+
+<h4 id="进行行的拼接--wm_concat函数">进行行的拼接  <code class="highlighter-rouge">wm_concat()</code>函数</h4>
+
+<p>好了,我们现在把每一列的数据整合在一起了,大功告成,可喜可贺.
+这是,项目经理过来了,表示这样不行(改需求),我要把一整个班的所有学生数据在一行都显示出来.</p>
+
+<p>大概是这样:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">class</th>
+      <th style="text-align: center">about</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">1</td>
+      <td style="text-align: center">张一//1//河南,赵三//3//新疆,张四//2//福建</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">2</td>
+      <td style="text-align: center">王五//1//北京,李六//3//河北,孙二//2//南京</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>我们已经把每一列的数据整合到一起了.现在,我们要对行进行处理了.<br />
+这时,我们要用到一个sql函数:<strong>wm_concat</strong><br />
+这是一个聚合函数，其作用是将一列数据转换成一行</p>
+
+<p><code class="highlighter-rouge">select s.class,wm_concat(s.student_name||'//'||s.student_id||'//'||s.student_from) about from student s</code></p>
+
+<p>这时我们会发现报错了:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ORA-00937: 不是单组分组函数
+00937. 00000 -  "not a single-group group function"
+*Cause:    
+*Action:
+行 1 列 8 出错
+</code></pre></div></div>
+
+<p>这是因为我们只把后面一个列进行整合了,而没有对第一列的数据 <strong>class</strong> 进行操作,这时我们只需要最语句最后加上一句: <code class="highlighter-rouge">group by s.class</code> 就会自动按照班级进行自增排序.</p>
+
+<p>sql语句:</p>
+
+<p><code class="highlighter-rouge">
+select s.class,wm_concat(s.student_name||'//'||s.student_id||'//'||s.student_from) about from student s group by s.class;</code></p>
+
+<h4 id="扩展replace函数">扩展,<code class="highlighter-rouge">REPLACE()</code>函数</h4>
+
+<p>我们很好的又完成了任务,这时又改需求了.
+项目经理说,不能用逗号连接啊,我们要用~来连接每一行.<br />
+这时我们需要用到 <code class="highlighter-rouge">REPLACE() </code> 这个函数,也就是正则<br />
+使用<code class="highlighter-rouge">REPLACE() </code>将其中的逗号<strong>,</strong> 替换为 <strong>~</strong> 就可以了</p>
+
+<p>sql语句:</p>
+
+<p><code class="highlighter-rouge">select s.class,replace(wm_concat(s.student_name||'//'||s.student_id||'//'||s.student_from),',','~') about from student s group by s.class;</code></p>
+
+<p>结果:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">class</th>
+      <th style="text-align: center">about</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">1</td>
+      <td style="text-align: center">张一//1//河南~赵三//3//新疆~张四//2//福建</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">2</td>
+      <td style="text-align: center">王五//1//北京~李六//3//河北~孙二//2//南京</td>
+    </tr>
+  </tbody>
+</table>
+:ET
