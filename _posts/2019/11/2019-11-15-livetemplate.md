@@ -13,7 +13,7 @@ tags:
 
 ## 打印入参日志
 
-LOG.info("收到 $class$.$method$ 调用请求，入参：$holder$", $params$);
+`LOG.info("收到 $class$.$method$ 调用请求，入参：$holder$", $params$);`
 
 ```groovy
 className() //class
